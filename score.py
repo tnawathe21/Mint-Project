@@ -197,7 +197,6 @@ def send_email(html):
         to_email = sys.argv[2]
     print('sending email to ' + to_email)
     
-    #yag = yagmail.SMTP('tnawathe.21@gmail.com') ## hardcoded version of the line below
     yag = yagmail.SMTP(to_email)
     
     yag.send(to = to_email, subject = 'DailyMint Update', contents = html) #, newline_to_break=False
