@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 import mintapi
 import pandas as pd
 import keyring
@@ -12,9 +14,6 @@ from premailer import transform
 #keyring.set_password('mintapi', "username", username)
 #keyring.set_password('mintapi',"password", password)
 #keyring.set_password('yagmail', 'mygmailusername', 'mygmailpassword')
-
-# THIS VERSION USES TRY EXCEPT TO HANDLE LACK OF CREDIT SCORE; ALSO ADDED TIME OPTION TO PRINTHELP
-# PROBLEM: CREDIT AND DEBIT FORMATTING DOESN'T SHOW UP FOR THE TEST VERSION
 
 def get_mint_handle():
     mint_username = keyring.get_password("mintapi", "username")
@@ -47,8 +46,8 @@ def get_mint_handle():
 
 def extract_data(mint):
     mint.initiate_account_refresh()
+    #time.sleep(300)
     txs = mint.get_transactions().head(10)
-    print(txs)
     accts = pd.DataFrame(mint.get_accounts())
     networth = "${:,.2f} k".format(mint.get_net_worth()/1000)
     try:
@@ -63,9 +62,7 @@ def extract_data(mint):
 
 def extract_data_dummy():
     txs = pd.read_csv('test\\transactions.csv', parse_dates=['date'])
-    #print(txs["amount"])
     accts = pd.read_csv('test\\accounts.csv', dtype={'status': object})
-    #print(accts)
     networth = "${:,.0f} k".format(7647656.86/1000)
     print("networth:" + networth)
     try:
@@ -88,7 +85,7 @@ def get_txs_html(txs):
     txs['amount'] = txs.apply(lambda row: adjust_amt(row), axis=1) #fix amount sign
     print('Applied credit and debit adjustments')
     
-    txs = txs.drop(columns=['description', 'transaction_type', 'labels', 'notes']) #drop uncessasasry columns
+    txs = txs.drop(columns=['description', 'transaction_type', 'labels', 'notes']) #drop unnecessary columns before saving transactions
     
     #save transactions
     filename = 'data\Txs_as_of_' + str(date.today()) + '.csv'
@@ -118,8 +115,7 @@ def get_accts_html(accts):
     filename = 'data\Accounts_as_of_' + str(date.today()) + '.csv'
     accts.to_csv(filename, index=False)
 
-    today = str(date.today())# Get today's date 
-    today = '2020-09-18'
+    today = str(date.today())# Get today's date
 
     try:  # open history file if available so we can compare with the last pull
         print('Loading history.')
@@ -203,10 +199,6 @@ def send_email(html):
     print('email sent')
     return
 
-def send_email_at(send_time, html):
-    time.sleep(send_time.timestamp() - time.time())
-    send_email(html)
-
 def write_to_file(html):
     f = open("test\email.html", "w")
     f.write(html)
@@ -220,24 +212,10 @@ def test():
     send_email(html)
     #write_to_file(html)
 
-def testTime():
-    credit_score, networth, txs_html, accts_html = extract_data_dummy()
-    html = generate_html(credit_score, networth, txs_html, accts_html)
-
-    first_email_time = datetime(2020, 11, 10, 5, 0, 0)
-    interval = timedelta(days=1) # will send an email every day minutes
-    send_time = first_email_time
-
-    while True:
-        send_email_at(send_time, html)
-        send_time = send_time + interval
-
-
 def print_help():
     print ("usage: python DailyMint.py setup (for the first time setup)\n\
-        python DailyMint.py myemail@xyz.com (going forward)\n\
-        python DailyMint.py test myemail@xyz.com (for testing)\n\
-            python DailyMint.py testTime myemail@xyz.com (for daily email)")
+       python DailyMint.py myemail@xyz.com (going forward)\n\
+       python DailyMint.py test myemail@xyz.com (for testing)")
 
 def setup():
     print ("One time setup")
@@ -266,16 +244,13 @@ def main():
     if len(sys.argv) < 2:
         print_help()
         return
-    elif((sys.argv[1] == 'test' or sys.argv[1] == 'testTime') and len(sys.argv) == 2):
+    elif((sys.argv[1] == 'test') and len(sys.argv) == 2): # user did not provide an email
         print_help()
         return
     elif(sys.argv[1] == 'setup'):
         setup()
     elif(sys.argv[1] == 'test' and len(sys.argv) == 3):
         test()
-        return
-    elif(sys.argv[1] == 'testTime' and len(sys.argv) == 3):
-        testTime()
         return
     else:
         mint =  get_mint_handle()
@@ -286,4 +261,3 @@ def main():
         mint.close()
 
 main()
-
