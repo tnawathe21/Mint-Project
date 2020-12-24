@@ -46,7 +46,7 @@ def get_mint_handle():
 
 def extract_data(mint):
     mint.initiate_account_refresh()
-    #time.sleep(300)
+    time.sleep(300)
     txs = mint.get_transactions().head(10)
     accts = pd.DataFrame(mint.get_accounts())
     networth = "${:,.2f} k".format(mint.get_net_worth()/1000)
@@ -106,7 +106,10 @@ def get_accts_html(accts):
     accts = accts[accts['value'] != 0 ] #filter out zero dollar accounts
 
     # commented this out since my csv doesn't have a status heading
-    #accts = accts[accts['status'].str.contains('1')] #only active accounts
+    try:
+        accts = accts[accts['status'].str.contains('1')] #only active accounts
+    except:
+        accts = accts # if there is no status column in accounts, ignore above line
 
     accts = accts[['id','value', 'accountName',  'fiLoginDisplayName']] #extract only relevent columns
     accts = accts.sort_values(by=['value'], ascending=False)
@@ -195,7 +198,7 @@ def send_email(html):
     
     yag = yagmail.SMTP(to_email)
     
-    yag.send(to = to_email, subject = 'DailyMint Update', contents = html) #, newline_to_break=False
+    yag.send(to = to_email, subject = 'DailyMint Update', contents = html)
     print('email sent')
     return
 
