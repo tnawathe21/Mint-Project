@@ -21,7 +21,7 @@ Download these files into your IDE:
 	
 ## __3. Configure gmail settings to send an email from a gmail account__
 	
-  You will need to adjust your google account settings to be able to use `yagmail` to send an an automated email through your account.
+  You will need to adjust your google account settings to be able to use `yagmail` to send an automated email through your account.
   
   Click on the account icon on the top right corner of your gmail account. Click __Manage > Security__. Navigate to the __Less secure app access__ section. Use the toggle switch to enable less secure apps.
 
