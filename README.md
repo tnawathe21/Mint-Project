@@ -21,7 +21,11 @@ Download these files into your IDE:
 	
 ## __3. Configure gmail settings to send an email from a gmail account__
 	
+<<<<<<< HEAD
   You will need to adjust your google account settings to be able to use `yagmail` to send an an automated email through your account.
+=======
+  You will need to adjust your google account settings to be able to use `yagmail` to send an automated email through your account.
+>>>>>>> b8cef7946fe1ed610feef8647214c8f4d2bc3a99
   
   Click on the account icon on the top right corner of your gmail account. Click __Manage > Security__. Navigate to the __Less secure app access__ section. Use the toggle switch to enable less secure apps.
 
@@ -46,3 +50,6 @@ Press ___i___ to enter Insert mode. Type `0 0 * * * path/to/your/file/run_DailyM
 Press ___esc___ to exit Insert mode. Type `:wq` to save and quit the text editor.
 
 ___Note:___ If you notice that your cron job is not running on your mac, this may be because of security settings. Go to __Settings > Security & Privacy > Privacy > Full Disk Access__. Click the lock at the bottom left corner to make changes. You will need to add `cron` as an application with full disk access. To do so, find where `cron` is located on your computer. This might be in `/bin`, `/sbin`, or `/usr/sbin`. Open these directories (you can type `open /sbin` in the terminal, for example) and search for `cron`. Drag it into the full disk access list and check the box to give it full disk access. Click the lock again to lock in your changes. You may have to enter your mac password. Now cron should have the proper permissions to run.
+
+
+
